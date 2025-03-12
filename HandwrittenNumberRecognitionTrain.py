@@ -18,10 +18,18 @@ os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 #Y_train、Y_test 是對應的數字標籤（0~9）
 (X_train, Y_train), (X_test, Y_test) = mnist.load_data()
 
-def plot_image(image):  
+######
+# 取得第一張圖片並儲存
+# first_image = X_train[0] * 255  # 還原 0~1 到 0~255
+# first_image = first_image.reshape(28, 28)  # 轉回 28x28 格式
+# import cv2
+# cv2.imwrite("HandwrittenNumberRecognitionTrain_1.png", first_image)
+######
+
+def plot_image(image):
     fig = plt.gcf()  
     fig.set_size_inches(3,3)  
-    plt.imshow(image, cmap='binary') # cmap='binary'  
+    plt.imshow(image, cmap='binary') # cmap='binary'
     plt.show()
 #顯示數字圖案, 記得要關閉視窗才會往下繼續執行
 #plot_image(X_train[0])
@@ -74,8 +82,6 @@ def show_train_history(train_history, train, validation):
     plt.show()
 show_train_history(train_history, 'accuracy', 'val_accuracy')  
 
-
 #5. 將模型儲存
 model.save('mnist.keras')
-
 

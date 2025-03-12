@@ -16,10 +16,9 @@ ctypes.windll.shcore.SetProcessDpiAwareness(1)  # 設定為 System DPI Aware
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-model=tf.keras.models.load_model('mnist.keras') #匯入之前訓練的模型存檔的位置,傳統神經網路
-#model=tf.keras.models.load_model('CNNMnist.keras') #之前記得模型存檔的位置,CNN 捲基
+model=tf.keras.models.load_model('CNNMnist.keras') #匯入之前訓練的模型存檔的位置,CNN 捲基神經網路
 
-fileName="testByManual1.jpg" #未來圖片存檔
+fileName="testByManual2.jpg" #未來圖片存檔
 #設定小畫家視窗
 width = 280
 height = 280
@@ -72,9 +71,7 @@ def predict():
     img = cv2.resize(cv2.imread(fileName),(28,28))
     pixel = (255-cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)) /255 # RGB->GRAY
     show_image(pixel)   
-    pixelarray=pixel.reshape(-1,28,28,1) #轉成輸入陣列<-CNN， -1-->自動分配
-    pixelarray=np.asarray([pixel]) #轉成輸入陣列<-傳統類神經
-    pixelarray=pixelarray.reshape(1,-1) #全部保留,拉平(傳統神經網路)
+    pixelarray=pixel.reshape(-1,28,28,1) #將 pixel 轉換成一個四維的 numpy 陣列. -1 表示讓 numpy 自動計算這個維度的大小,通常用來處理批次資料（batch）,意思是如果有多張影像,這個維度會自動調整成批次大小. 1 是圖像的通道,對於灰階圖像來說,只有一個通道.
     label=model.predict(pixelarray) # 用MNIST模型來預測
     maxindex = np.argmax(label)#找出0,1,2,...9，機率最大的輸出
     #print(label) #顯示機率矩陣
