@@ -156,6 +156,7 @@ MNIST 是一個經典的手寫數字資料集，主要用於機器學習和深�
   標籤（Y）：數字 0~9，通常會轉成 One-Hot 編碼（如 4 → [0,0,0,0,1,0,0,0,0,0]）。
 
 數字5
+
 ![image](https://github.com/user-attachments/assets/4a11e03c-6420-4a06-b6c3-c6b0282e2ddb)
 
 ------
@@ -195,7 +196,7 @@ pip install opencv-contrib-python
 ## 3-1. HandwrittenNumberRecognitionTrain.py
 使用 Keras 建立了一個 基於 MLP 的深度學習模型,來辨識手寫數字,透過 MNIST 數據集訓練、驗證、測試、並儲存模型,最終能夠準確識別 0~9 的手寫數字。
 
-- 整體流程如下：
+### 主要功能：
 
 - 1.資料收集與前處理
 
@@ -248,6 +249,7 @@ pip install opencv-contrib-python
 ## 3-2. HandwrittenNumberRecognitionByImage.py
 使用 Keras 訓練好的 MNIST 手寫數字辨識模型(from HandwrittenNumberRecognitionTrain.py)，對指定圖片進行預測並輸出結果。
 
+### 主要功能：
 - 1.匯入必要的函式庫
   
   cv2（OpenCV）：用於讀取與處理圖片、顯示影像。
@@ -307,6 +309,7 @@ pip install opencv-contrib-python
 ## 3-3. HandwrittenNumberRecognitionByManual.py
 透過手寫輸入介面，使用 Keras 訓練好的 MNIST 手寫數字辨識模型，對使用者繪製的數字進行預測並顯示結果。
 
+### 主要功能：
 - 1.匯入必要的函式庫
   
   tkinter：建立 GUI 繪圖介面，讓使用者用滑鼠繪製手寫數字。
@@ -374,6 +377,102 @@ pip install opencv-contrib-python
 ![image](https://github.com/user-attachments/assets/54b24c99-ebcb-4f53-9a50-d17fc1d58615)
 
 ![image](https://github.com/user-attachments/assets/b33ec720-2210-4481-b999-9939d3d4e30b)
+
+------
+
+## 3-4. HandwrittenNumberRecognitionInCNNNeuralNetwork.py
+訓練 CNN 捲基模型來識別 MNIST 數據集中的手寫數字，並對模型進行評估與儲存。
+
+### 主要功能：
+- 1.資料載入與預處理：
+
+  程式從keras.datasets.mnist中載入MNIST數據集，這是一個包含60,000張訓練圖片和10,000張測試圖片的數據集，每張圖片的大小是28x28像素，並且是灰階（單一顏色通道）。
+  
+  接著對影像進行數值歸一化處理（除以255），將每個像素值轉換到[0, 1]範圍內，並且將標籤轉換為one-hot編碼。
+  
+- 2.模型建立：
+
+  使用Sequential模型來定義神經網路結構。
+
+  第一層為一個卷積層（Conv2D），具有16個3x3的卷積核，激活函數使用ReLU，並指定輸入形狀為28x28x1。
+
+  接著加入池化層（MaxPooling2D）進行降維處理，並使用Dropout層來隨機丟棄部分神經元以防止過擬合。
+
+  第二層為另一個卷積層，使用32個3x3的卷積核，再加上池化層和Dropout層。
+
+  然後將資料攤平（Flatten），並經過幾層全連接層（Dense），每層後面都跟著Dropout層來減少過擬合。
+
+  最後一層是輸出層，使用softmax激活函數，輸出10個神經元對應於0-9的數字。
+
+- 3.模型編譯與訓練：
+
+  編譯模型時選擇了adam優化器，並使用categorical_crossentropy作為損失函數，指標設為準確率。
+  
+  使用訓練資料進行模型訓練，並且將20%的訓練數據用作驗證集，進行20個epoch的訓練。
+
+- 4.顯示訓練歷程：
+
+  訓練過程中的準確率（訓練集和驗證集）會被繪製出來，幫助觀察模型的訓練效果。
+
+- 5.模型評估：
+
+  使用測試資料（x_test和y_test）評估模型的損失和準確率。
+
+- 6.儲存模型：
+
+  訓練完成後，將訓練好的模型儲存為CNNMnist.keras檔案，方便未來載入與使用。
+
+模型 Summary
+![image](https://github.com/user-attachments/assets/01517ddd-bf50-4951-831e-0849e71c3ed1)
+
+![image](https://github.com/user-attachments/assets/ad108483-3e94-4910-a552-9bdfd2e06a86)
+
+![image](https://github.com/user-attachments/assets/ffe2a3eb-71ea-4ea8-94b0-351ee2e0f4ac)
+
+------
+
+## 3-5. HandwrittenNumberRecognitionInCNNNeuralNetworkByManual.py
+
+### 主要功能：
+
+
+- 1.手繪數字：
+
+  使用 tkinter 來建立一個畫布，使用者可以在畫布上繪製手寫數字，這透過 paint() 函式來實現，當滑鼠左鍵按下並移動時，會在畫布上繪製黑色線條。
+
+- 2.圖片儲存與預處理：
+
+  當使用者按下 "辨識" 按鈕時，會將畫布內容儲存為圖片（testByManual2.jpg），並對這張圖片進行預處理。
+  
+  預處理包括將圖片轉為灰階並反轉顏色，然後將圖像尺寸調整為28x28像素，這是MNIST數字識別模型所需的標準尺寸。
+
+- 3.模型預測：
+
+  預處理後的圖像被轉換為四維陣列，並輸入到事先訓練好的CNN模型（CNNMnist.keras），進行手寫數字的辨識。
+
+  模型返回的是一個機率矩陣，程式會找出最大機率對應的數字，並顯示辨識結果與機率。
+
+- 4.顯示圖像：
+
+  在預測過程中，程式會將處理過的數字圖像顯示出來，以便使用者查看。
+
+- 5.清除畫布：使用者可以按下 "清除" 按鈕來清空畫布，並重設任何顯示的辨識結果。
+
+手動輸入
+
+![image](https://github.com/user-attachments/assets/50df81ff-65a9-4967-a018-360a4360a83f)
+
+記得按下Figure1的關閉按鈕,才會往下執行辨識功能.
+
+![image](https://github.com/user-attachments/assets/0bea0bfe-57c5-4a3a-a1e3-d0058a929611)
+
+辨識結果
+
+![image](https://github.com/user-attachments/assets/14300ddc-4a57-4108-88ed-feab602bc8bc)
+
+辨識結果
+
+![image](https://github.com/user-attachments/assets/40c222bb-e4ff-4f23-af40-c7aee97bc112)
 
 ------
 
