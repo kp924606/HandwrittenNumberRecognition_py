@@ -272,7 +272,7 @@ pip install opencv-contrib-python
 
 ------
 
-## 3-3. HandwrittenNumberRecognitionByImage.py
+## 3-3. HandwrittenNumberRecognitionByManual.py
 透過手寫輸入介面，使用 Keras 訓練好的 MNIST 手寫數字辨識模型，對使用者繪製的數字進行預測並顯示結果。
 
 - 1.匯入必要的函式庫
@@ -291,9 +291,6 @@ pip install opencv-contrib-python
   
   os：設定環境變數，避免 TensorFlow 載入模型時發生錯誤。
   
-  threading、ctypes：提升 GUI 效能與 DPI 兼容性，確保視窗顯示正常。
-  
-
 - 2.GUI 介面與手寫輸入
   
   建立 Tkinter 視窗 (root)，並建立 畫布 (Canvas)，讓使用者用滑鼠繪製數字。
@@ -344,6 +341,8 @@ pip install opencv-contrib-python
 
 ![image](https://github.com/user-attachments/assets/54b24c99-ebcb-4f53-9a50-d17fc1d58615)
 
+![image](https://github.com/user-attachments/assets/b33ec720-2210-4481-b999-9939d3d4e30b)
+
 ------
 
 ## About Me
@@ -356,5 +355,3 @@ Thanks & Best Regards !
 Email: ​​kp924606@gmail.com
 
 LinkedIn:https://www.linkedin.comin/tsai-cheng-ting/
-
-
