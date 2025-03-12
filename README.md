@@ -124,7 +124,7 @@ import matplotlib.pyplot as plt
 - plt.title()：設置圖表的標題。
 - plt.legend()：顯示圖例。
 - plt.show()：顯示圖形。
-- 
+  
 ------
 
 ## 1-5. MNIST（Modified National Institute of Standards and Technology）數據集
@@ -165,7 +165,7 @@ Please refer the command as below.
 
 ## 2-1. matplotlib 
 ```bash
-#pip install matplotlib
+pip install matplotlib
 ```
 
 ## 2-1. tensorflow & keras
