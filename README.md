@@ -137,6 +137,8 @@ Please refer the command as below.
 ```
 
 ## 2-1. tensorflow & keras
+
+if you have nVidia GPU.
 ```bash
 conda install tensorflow-gpu==2.6
 conda install keras==2.6
@@ -144,6 +146,203 @@ pip install h5py
 pip install numpy==1.23.4
 pip install opencv-contrib-python
 ```
+
+if you haven't nVidia GPU.
+```bash
+conda install tensorflow
+conda install keras==2.6
+pip install h5py
+pip install numpy==1.23.4
+pip install opencv-contrib-python
+```
+
+------
+
+## 3. py Code：
+
+## 3-1. HandwrittenNumberRecognitionTrain.py
+使用 Keras 建立了一個 基於 MLP 的深度學習模型,來辨識手寫數字,透過 MNIST 數據集訓練、驗證、測試、並儲存模型,最終能夠準確識別 0~9 的手寫數字。
+
+- 整體流程如下：
+
+- 1.資料收集與前處理
+
+  下載 MNIST 數據集（包含 60,000 張訓練圖片與 10,000 張測試圖片）。
+  
+  影像數據轉換為 28×28 的矩陣並攤平成 784 維向量，進行歸一化（將像素值從 0255 轉為 01）。
+  
+  標籤（0~9 數字）轉換為 One-Hot 編碼，以便模型輸出機率分佈。
+
+- 2.建立模型（Sequential 模型）
+
+  採用 多層感知機（MLP），包含 5 層 Dense（全連接層）。
+  
+  每層使用 ReLU 激活函數，最後一層使用 Softmax 激活函數（轉換成 0~9 的機率分布）。
+  
+  加入 Dropout（隨機遺忘），防止過擬合。
+  
+  使用 Adam 優化器，損失函數為 categorical_crossentropy（交叉熵），衡量分類誤差。
+
+- 3.訓練模型
+
+  以 80% 訓練數據 訓練模型，20% 驗證數據 進行驗證。
+  
+  設定 30 個 epochs（訓練週期），每次訓練批次大小為 200。
+  
+  顯示訓練過程，監控 loss（損失值）與 accuracy（準確率）。
+
+- 4.評估模型
+
+  使用測試數據集評估模型表現，輸出測試損失（test loss）與測試準確率（test accuracy）。
+  
+  繪製訓練與驗證的 accuracy 變化趨勢圖，以觀察模型的學習過程。
+
+- 5.儲存模型
+
+  訓練完成後，將模型存為 mnist.keras，以便後續載入使用。
+
+![image](https://github.com/user-attachments/assets/ad3c2073-4433-4510-9380-7e3870b40155)
+
+![image](https://github.com/user-attachments/assets/7dafe992-6e6b-4166-9751-abb27339f550)
+
+![image](https://github.com/user-attachments/assets/e7c1adee-990d-46f6-b4cc-ce5adf0ab261)
+
+![image](https://github.com/user-attachments/assets/6d4e9fe2-74a8-4029-829c-b90757bcaf73)
+
+![image](https://github.com/user-attachments/assets/e10c38ae-5db6-477c-aa43-eab7307b93fe)
+
+------
+
+## 3-2. HandwrittenNumberRecognitionByImage.py
+使用 Keras 訓練好的 MNIST 手寫數字辨識模型(from HandwrittenNumberRecognitionTrain.py)，對指定圖片進行預測並輸出結果。
+
+- 1.匯入必要的函式庫
+  
+  cv2（OpenCV）：用於讀取與處理圖片、顯示影像。
+  
+  keras：載入 已訓練的手寫數字辨識模型（mnist.keras）。
+  
+  numpy：進行數據處理與格式轉換。
+  
+  threading：使用多執行緒顯示影像，避免影響主程式執行。
+
+- 2.讀取與處理影像
+  
+  載入模型（mnist.keras）：這是一個 預訓練的 MNIST 手寫數字辨識模型。
+  
+  載入圖片（test1.jpg）：讀取使用者提供的圖片作為識別對象。
+  
+  調整大小（cv2.resize(img, (28,28))）：將圖片縮放成 28x28 像素（符合 MNIST 模型的輸入格式）。
+  
+  顯示影像（使用多執行緒 show_img()）：非同步顯示調整後的影像，避免阻塞主程式。
+
+- 3.影像前處理
+  
+  轉換為灰階（cv2.COLOR_BGR2GRAY）：將彩色圖片轉為 單色（黑白），因為 MNIST 模型只接受單通道輸入。
+  
+  反轉顏色並標準化：
+  
+  255 - gray：MNIST 訓練數據的手寫數字是白底黑字，而某些影像可能是黑底白字，因此需要進行 顏色反轉。
+  
+  除以 255：將數據歸一化，使像素值介於 0~1（這符合 MNIST 模型的輸入需求）。
+  
+  轉換為 1 維陣列 reshape(1, -1)，以符合模型輸入格式。
+
+- 4.進行數字辨識
+  
+  模型預測（model.predict(pixelarray)）：輸入處理後的影像，讓模型進行 手寫數字分類預測，返回 10 個數字（0~9）的機率分布。
+  
+  找出機率最高的數字（np.argmax(label)）：取最大機率值對應的索引，即預測結果。
+  
+  設定辨識門檻（60%）：
+  
+  若最大機率值 > 0.6，則顯示辨識結果。
+  
+  否則，顯示「無法確認」。
+
+- 5.程式結束
+  
+  等待使用者輸入後退出程式（input("按下任何按鍵+Enter退出...")）。
+
+![image](https://github.com/user-attachments/assets/26ef1799-b91b-4efd-9d14-639f1e424360)
+
+![image](https://github.com/user-attachments/assets/b538fa9b-5c98-40fa-96a5-2ee483ef5f3c)
+
+![image](https://github.com/user-attachments/assets/17b18daf-e3a0-491c-abad-c7127cb744c7)
+
+------
+
+## 3-3. HandwrittenNumberRecognitionByImage.py
+透過手寫輸入介面，使用 Keras 訓練好的 MNIST 手寫數字辨識模型，對使用者繪製的數字進行預測並顯示結果。
+
+- 1.匯入必要的函式庫
+  
+  tkinter：建立 GUI 繪圖介面，讓使用者用滑鼠繪製手寫數字。
+  
+  PIL.ImageGrab：擷取畫布內容，將手寫數字存為圖片。
+  
+  cv2（OpenCV）：處理影像，包括 縮放、轉換灰階 等步驟，使其符合 MNIST 模型的輸入格式。
+  
+  matplotlib.pyplot：用於顯示影像，幫助使用者確認手寫輸入內容。
+  
+  tensorflow.keras：載入並使用 MNIST 預訓練模型 來辨識手寫數字。
+  
+  numpy：進行數據處理與格式轉換，使其符合模型輸入需求。
+  
+  os：設定環境變數，避免 TensorFlow 載入模型時發生錯誤。
+  
+  threading、ctypes：提升 GUI 效能與 DPI 兼容性，確保視窗顯示正常。
+  
+
+- 2.GUI 介面與手寫輸入
+  
+  建立 Tkinter 視窗 (root)，並建立 畫布 (Canvas)，讓使用者用滑鼠繪製數字。
+
+  paint(event)：當滑鼠 左鍵按住並移動 時，在畫布上畫出黑色筆跡。
+
+  clear()：清空畫布，讓使用者重新繪製。
+
+- 3.擷取手寫數字並進行辨識
+  
+  predict()：
+  
+    擷取畫布內容 (ImageGrab.grab())，將手寫內容存為圖片 (testByManual1.jpg)。
+  
+    影像前處理：
+  
+      縮放至 28x28 像素（cv2.resize()）。
+      轉換為灰階（cv2.cvtColor()）。
+      反轉顏色並標準化至 0~1（(255-gray)/255），符合 MNIST 模型格式。
+  
+    顯示影像：
+  
+      show_image(pixel)：以 Matplotlib 顯示處理後的 28x28 影像，讓使用者確認。
+
+    辨識數字：
+  
+      model.predict(pixelarray)：將影像輸入 Keras MNIST 預訓練模型 進行數字預測。
+      np.argmax(label)：找出 機率最高的數字。
+      若 機率超過 50% (label.max() > 0.5)，則顯示辨識結果，否則顯示「無法辨識」。
+
+- 4.顯示辨識結果
+  
+  使用 tk.Label 來動態顯示 辨識結果與機率。
+  
+  當按下「辨識」按鈕時：
+  
+      會 擷取畫布內容、處理圖片、預測數字並更新顯示文字。
+  
+  當按下「清除」按鈕時：
+  
+      會 清空畫布與影像視窗，讓使用者重新繪製。
+
+請手動輸入數字
+![image](https://github.com/user-attachments/assets/2b21f6c4-b3d5-44bc-986d-4b61410d241e)
+
+記得按下Figure1的關閉按鈕,才會往下執行辨識功能.
+![image](https://github.com/user-attachments/assets/9f76bce8-2d55-47f3-8a62-403123e174a9)
+
+![image](https://github.com/user-attachments/assets/54b24c99-ebcb-4f53-9a50-d17fc1d58615)
 
 ------
 
